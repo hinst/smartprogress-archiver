@@ -1,0 +1,18 @@
+{
+    "manifest_version": 2,
+    "name": "SmartProgress Archiver",
+    "version": "0.1",
+    "description": "Archive posts from SmartProgress.do",
+    "applications": {
+        "gecko": {
+            "id": "smartprogress-archiver@mozilla.org",
+            "strict_min_version": "45.0"
+        }
+    },
+    "content_scripts": [
+        {
+            "matches": ["*://smartprogress.do/*"],
+            "js": "content-script.js"
+        }
+    ]
+}
