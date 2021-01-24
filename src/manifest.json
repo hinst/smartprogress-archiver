@@ -12,7 +12,10 @@
     "content_scripts": [
         {
             "matches": ["*://smartprogress.do/*"],
-            "js": "content-script.js"
+            "js": ["content-compiled.js"]
         }
-    ]
+    ],
+    "icons": {
+        "48": "smartprogress-archiver.png"
+    }
 }
