@@ -12,6 +12,7 @@ function copySrc(fileName: string) {
 }
 copySrc('manifest.json');
 copySrc('smartprogress-archiver.png');
+copySrc('export-now.png');
 
 function copyDist(fileName: string) {
     fs.copyFileSync('./dist/' + fileName, './dist-ext/' + fileName);

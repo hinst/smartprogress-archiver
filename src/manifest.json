@@ -17,5 +17,10 @@
     ],
     "icons": {
         "48": "smartprogress-archiver.png"
+    },
+    "browser_action": {
+        "default_icon": {
+            "32": "export-now.png"
+        }
     }
 }
