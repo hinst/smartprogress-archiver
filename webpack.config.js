@@ -1,7 +1,8 @@
 const path = require('path');
 
 const commonConfig = {
-    mode: 'production',
+    mode: 'development',
+    devtool: 'source-map',
     module: {
         rules: [
             {
