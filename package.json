@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build-all": "tsc --outDir ./compiled/ ./src/build.ts & node ./compiled/build.js",
-    "build-content": "webpack --config webpack-content-config.js"
+    "build-content": "webpack --config webpack.config.js"
   },
   "keywords": [],
   "author": "",

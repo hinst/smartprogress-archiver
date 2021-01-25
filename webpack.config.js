@@ -1,8 +1,7 @@
 const path = require('path');
 
-module.exports = {
+const commonConfig = {
     mode: 'production',
-    entry: './src/content-script.ts',
     module: {
         rules: [
             {
@@ -14,9 +13,25 @@ module.exports = {
     },
     resolve: {
         extensions: [ '.tsx', '.ts', '.js' ]
-    },
+    }
+};
+
+const contentScriptConfig = Object.assign({}, commonConfig, {
+    entry: './src/content-script.ts',
     output: {
         filename: 'content-compiled.js',
         path: path.resolve(__dirname, 'dist')
     }
-}
+});
+
+const backgroundScriptConfig = Object.assign({}, commonConfig, {
+    entry: './src/background-script.ts',
+    output: {
+        filename: 'background-compiled.js',
+        path: path.resolve(__dirname, 'dist')
+    }
+});
+
+module.exports = [
+    contentScriptConfig, backgroundScriptConfig
+];

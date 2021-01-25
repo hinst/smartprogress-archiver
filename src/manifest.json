@@ -9,14 +9,17 @@
             "strict_min_version": "45.0"
         }
     },
+    "icons": {
+        "48": "smartprogress-archiver.png"
+    },
     "content_scripts": [
         {
             "matches": ["*://smartprogress.do/*"],
             "js": ["content-compiled.js"]
         }
     ],
-    "icons": {
-        "48": "smartprogress-archiver.png"
+    "background": {
+        "scripts": ["background-compiled.js"]
     },
     "browser_action": {
         "default_icon": {
