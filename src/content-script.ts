@@ -1,6 +1,7 @@
 import { MSG_EXPORT } from "./common";
 import JSZip from 'jszip';
 import * as smart_progress from './smart-progress';
+import sleep from "sleep-promise";
 
 console.log('CONTENT SCRIPT STARTED');
 
@@ -18,7 +19,6 @@ async function readPosts(goalId: string, startId: string) {
     url += '&only_author=0';
     url += '&change_sorting=0';
     url += '&obj_type=0';
-    console.log(document.cookie);
     const response = await fetch(url, {
         headers: {
             Accept: 'application/json',
@@ -39,10 +39,15 @@ async function startArchiving() {
     if (posts != null) {
         const zip = new JSZip();
         console.log('Reading posts...');
-        for (const post of posts.blog) {
-            const fileContent = '<html><body>' + post.msg + '</body></html>';
-            const fileName = post.date.replace(':', '-').replace(':', '-') + '.html';
-            zip.file(fileName, fileContent);
+        while (posts != null && posts.blog && posts.blog.length > 0) {
+            for (const post of posts.blog) {
+                const fileContent = '<html><body>' + post.msg + '</body></html>';
+                const fileName = post.date.replace(':', '-').replace(':', '-') + '.html';
+                zip.file(fileName, fileContent);
+            }
+            await sleep(1000);
+            console.log('Loaded posts: ' + Object.keys(zip.files).length);
+            posts = await readPosts(goalId, posts.blog[posts.blog.length - 1].id)
         }
         const zipBlob = await zip.generateAsync({type: 'blob'});
         const a = document.createElement('a');
