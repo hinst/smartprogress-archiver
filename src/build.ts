@@ -18,5 +18,7 @@ function copyDist(fileName: string) {
     fs.copyFileSync('./dist/' + fileName, './dist-ext/' + fileName);
 }
 copyDist('content-compiled.js');
+copyDist('content-compiled.js.map');
 copyDist('background-compiled.js');
+copyDist('background-compiled.js.map');
 
