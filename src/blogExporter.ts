@@ -1,7 +1,9 @@
 import * as smartProgress from './smart-progress';
 import w3cssContent from '../third-party/w3.css';
+
 // @ts-ignore
-import archivePageTemplate from './template/archive-page.html';
+import _archivePageTemplate from './template/archive-page.html';
+const archivePageTemplate: string = _archivePageTemplate;
 // @ts-ignore
 import _postPanelTemplate from './template/post-panel.html';
 const postPanelTemplate: string = _postPanelTemplate;
