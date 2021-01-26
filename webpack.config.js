@@ -9,11 +9,18 @@ const commonConfig = {
                 test: /\.tsx?$/,
                 use: 'ts-loader',
                 exclude: path.resolve(__dirname, 'node_modules')
+            },
+            {
+                use: 'asset/source',
+                include: [
+                    path.resolve(__dirname, 'third-party/w3.css'),
+                    path.resolve(__dirname, 'src/template'),
+                ]
             }
         ]
     },
     resolve: {
-        extensions: [ '.tsx', '.ts', '.js' ]
+        extensions: [ '.tsx', '.ts', '.js', '.css' ]
     }
 };
 

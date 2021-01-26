@@ -1,7 +1,7 @@
 import { MSG_EXPORT } from "./common";
-import JSZip from 'jszip';
 import * as smart_progress from './smart-progress';
 import sleep from "sleep-promise";
+import { BlogExporter } from "./blogExporter";
 
 console.log('CONTENT SCRIPT STARTED');
 
@@ -37,22 +37,25 @@ async function startArchiving() {
     console.log('Goal id', goalId);
     let posts: smart_progress.Posts = await readPosts(goalId, '0');
     if (posts != null) {
-        const zip = new JSZip();
-        console.log('Reading posts...');
-        while (posts != null && posts.blog && posts.blog.length > 0) {
-            for (const post of posts.blog) {
-                const fileContent = '<html><body>' + post.msg + '</body></html>';
-                const fileName = post.date.replace(':', '-').replace(':', '-') + '.html';
-                zip.file(fileName, fileContent);
+        if (false) {
+            console.log('Reading posts...');
+            while (posts != null && posts.blog && posts.blog.length > 0) {
+                for (const post of posts.blog) {
+                    const fileContent = '<html><body>' + post.msg + '</body></html>';
+                    const fileName = post.date.replace(':', '-').replace(':', '-') + '.html';
+                }
+                break;
+                await sleep(1000);
+                posts = await readPosts(goalId, posts.blog[posts.blog.length - 1].id)
             }
-            await sleep(1000);
-            console.log('Loaded posts: ' + Object.keys(zip.files).length);
-            posts = await readPosts(goalId, posts.blog[posts.blog.length - 1].id)
         }
-        const zipBlob = await zip.generateAsync({type: 'blob'});
+        const exporter = new BlogExporter();
+        const fileText = exporter.generate();
+
+        const blob = new Blob([fileText], { type: 'text/html' });
         const a = document.createElement('a');
-        a.href = URL.createObjectURL(zipBlob);
-        a.download = 'archive.zip';
+        a.href = URL.createObjectURL(blob);
+        a.download = 'archive.html';
         a.style.display = 'hidden';
         document.body.appendChild(a);
         a.click();
