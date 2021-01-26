@@ -1,12 +1,43 @@
 import * as smartProgress from './smart-progress';
 import w3cssContent from '../third-party/w3.css';
 // @ts-ignore
-import archivePageContent from './template/archive-page.html';
+import archivePageTemplate from './template/archive-page.html';
+// @ts-ignore
+import _postPanelTemplate from './template/post-panel.html';
+const postPanelTemplate: string = _postPanelTemplate;
+// @ts-ignore
+import _commentTemplate from './template/comment-template.html';
+const commentTemplate: string = _commentTemplate;
 
 export class BlogExporter {
     posts: smartProgress.Posts;
+
+    constructor(posts: smartProgress.Posts) {
+        this.posts = posts;
+    }
+
     generate(): string {
-        let template = archivePageContent.replace('/*w3css*/', w3cssContent);
-        return template;
+        const content = this.posts.blog.map(post => this.generatePost(post)).join('\n');
+        let outputText = archivePageTemplate
+            .replace('/*w3css*/', w3cssContent)
+            .replace('/*content*/', content);
+        return outputText;
+    }
+
+    private generatePost(post: smartProgress.Post) {
+        const commentsContent = post.comments
+            ? post.comments.map(comment => this.generateComment(comment)).join('\n')
+            : '';
+        return postPanelTemplate
+            .replace('$date', post.date)
+            .replace('$text', post.msg)
+            .replace('$countOfComments', post.comments ? '' + post.comments.length : '?')
+            .replace('$comments', commentsContent);
+    }
+
+    private generateComment(comment: smartProgress.Comment) {
+        return commentTemplate
+            .replace('$userName', comment.user ? comment.user.username : '')
+            .replace('$message', comment.msg);
     }
 }

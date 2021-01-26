@@ -53,7 +53,8 @@ async function startArchiving() {
                 posts = await readPosts(goalId, posts.blog[posts.blog.length - 1].id)
             }
         }
-        const exporter = new BlogExporter();
+        console.log(posts);
+        const exporter = new BlogExporter(posts);
         const fileText = exporter.generate();
         const blob = new Blob([fileText], { type: 'text/html' });
         const a = document.createElement('a');
