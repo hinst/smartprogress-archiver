@@ -22,3 +22,4 @@ copyDist('content-compiled.js.map');
 copyDist('background-compiled.js');
 copyDist('background-compiled.js.map');
 
+child_process.execSync('tar.exe -C ./dist-ext -a -c -f smartprogress-archiver.zip *', {stdio: 'inherit'});

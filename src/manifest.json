@@ -5,8 +5,8 @@
     "description": "Archive posts from SmartProgress.do",
     "applications": {
         "gecko": {
-            "id": "smartprogress-archiver@mozilla.org",
-            "strict_min_version": "45.0"
+            "id": "smartprogress-archiver@test",
+            "strict_min_version": "70.0"
         }
     },
     "icons": {
