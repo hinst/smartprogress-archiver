@@ -33,7 +33,11 @@ async function readPosts(goalId: string, startId: string) {
 }
 
 async function startArchiving() {
-    const goalId = Object.keys(getWindow().GOALS_DATA)[0];
+    const goalsData = getWindow().GOALS_DATA;
+    if (goalsData == null) {
+        console.error('Need to be on page: goal & blog');
+    }
+    const goalId = Object.keys(goalsData)[0];
     console.log('Goal id', goalId);
     let posts: smart_progress.Posts = await readPosts(goalId, '0');
     if (posts != null) {
@@ -51,7 +55,6 @@ async function startArchiving() {
         }
         const exporter = new BlogExporter();
         const fileText = exporter.generate();
-
         const blob = new Blob([fileText], { type: 'text/html' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);

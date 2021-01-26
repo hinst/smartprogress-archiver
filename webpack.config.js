@@ -11,7 +11,7 @@ const commonConfig = {
                 exclude: path.resolve(__dirname, 'node_modules')
             },
             {
-                use: 'asset/source',
+                type: 'asset/source',
                 include: [
                     path.resolve(__dirname, 'third-party/w3.css'),
                     path.resolve(__dirname, 'src/template'),
