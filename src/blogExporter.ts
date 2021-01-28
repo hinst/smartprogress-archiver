@@ -12,14 +12,14 @@ import _commentTemplate from './template/comment-template.html';
 const commentTemplate: string = _commentTemplate;
 
 export class BlogExporter {
-    posts: smartProgress.Posts;
+    posts: smartProgress.Post[];
 
-    constructor(posts: smartProgress.Posts) {
+    constructor(posts: smartProgress.Post[]) {
         this.posts = posts;
     }
 
     generate(): string {
-        const content = this.posts.blog.map(post => this.generatePost(post)).join('\n');
+        const content = this.posts.map(post => this.generatePost(post)).join('\n');
         let outputText = archivePageTemplate
             .replace('/*w3css*/', w3cssContent)
             .replace('/*content*/', content);

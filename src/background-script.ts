@@ -1,7 +1,5 @@
 import { MSG_EXPORT } from "./common";
 
-
-
 async function receiveToolBarButtonClick() {
     const activeTabs = await browser.tabs.query(
         {active: true, windowId: browser.windows.WINDOW_ID_CURRENT}
