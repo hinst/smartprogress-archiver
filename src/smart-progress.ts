@@ -1,5 +1,7 @@
 import sleep from "sleep-promise";
 
+const smartProgressUrl = 'https://smartprogress.do';
+
 export class Post {
     id: string;
     msg: string;
@@ -24,7 +26,7 @@ export class User {
 type ProgressEventReceiver = (count: number) => Promise<void>;
 
 async function readPosts(goalId: string, startId: string) {
-    let url = 'https://smartprogress.do/blog/getPosts';
+    let url = smartProgressUrl + '/blog/getPosts';
     url += '?obj_id=' + goalId;
     url += '&sorting=old_top';
     url += '&start_id=' + startId;
@@ -40,8 +42,10 @@ async function readPosts(goalId: string, startId: string) {
             Host: 'smartprogress.do'
         }
     });
-    if (!response.ok)
+    console.log(response.statusText);
+    if (!response.ok) {
         return null;
+    }
     const posts = await response.json();
     return posts;
 }
@@ -63,4 +67,14 @@ export async function readGoalPosts(goalId: string, onProgress: ProgressEventRec
 }
 
 export async function readComments(postId: string) {
+    let url = smartProgressUrl + '/blog/getComments?postId=' + postId;
+    const response = await fetch(url, {
+        headers: {
+            Accept: 'application/json',
+            Cookie: document.cookie,
+            Host: 'smartprogress.do'
+        }
+    });
+    if (!response.ok)
+        throw new Error('Could not read comments: ' + response.statusText);
 }
