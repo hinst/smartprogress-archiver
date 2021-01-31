@@ -19,7 +19,8 @@ export class BlogExporter {
     }
 
     generate(): string {
-        const content = this.posts.map(post => this.generatePost(post)).join('\n');
+        const content = this.posts
+            .map(post => this.generatePost(post)).join('\n');
         let outputText = archivePageTemplate
             .replace('/*w3css*/', w3cssContent)
             .replace('/*content*/', content);
@@ -32,7 +33,9 @@ export class BlogExporter {
             : '';
         return postPanelTemplate
             .replace('$date', post.date)
+            .replace('$type', post.type)
             .replace('$text', post.msg)
+            .replace('$username', post.username || '')
             .replace('$countOfComments', post.comments ? '' + post.comments.length : '?')
             .replace('$comments', commentsContent);
     }

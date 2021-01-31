@@ -3,10 +3,14 @@ import sleep from "sleep-promise";
 const smartProgressUrl = 'https://smartprogress.do';
 
 export class Post {
+    /** Can be: 'post' */
+    type: string;
     id: string;
     msg: string;
     date: string;
     comments: Comment[];
+    count_comments: string;
+    username: string;
 }
 
 export class Posts {
@@ -16,6 +20,12 @@ export class Posts {
 export class Comment {
     msg: string;
     user: User;
+}
+
+export class GetCommentsResponse {
+    /** Should be "success" */
+    status: string;
+    comments: Comment[];
 }
 
 export class User {
@@ -42,15 +52,17 @@ async function readPosts(goalId: string, startId: string) {
             Host: 'smartprogress.do'
         }
     });
-    console.log(response.statusText);
     if (!response.ok) {
-        return null;
+        const text = await response.text();
+        throw new Error('Could not load blog posts: ' + response.statusText + '\n' + text);
     }
     const posts = await response.json();
     return posts;
 }
 
-export async function readGoalPosts(goalId: string, onProgress: ProgressEventReceiver): Promise<Post[]> {
+export async function readGoalPosts(goalId: string,
+        onPostProgress: ProgressEventReceiver,
+        onCommentProgress: ProgressEventReceiver): Promise<Post[]> {
     const allPosts: Post[] = [];
     let startId = '0';
     while (true) {
@@ -58,16 +70,23 @@ export async function readGoalPosts(goalId: string, onProgress: ProgressEventRec
         if (posts != null && posts.blog && posts.blog.length) {
             allPosts.push(...posts.blog);
             startId = posts.blog[posts.blog.length - 1].id;
-            if (onProgress)
-                await onProgress(allPosts.length);
+            if (onPostProgress)
+                await onPostProgress(allPosts.length);
         } else
             break;
+    }
+    for (const post of allPosts) {
+        if (post.comments && post.comments.length < parseInt(post.count_comments)) {
+            post.comments = (await readComments(post.id)).comments;
+            if (onCommentProgress)
+                await onCommentProgress(post.comments.length);
+        }
     }
     return allPosts;
 }
 
-export async function readComments(postId: string) {
-    let url = smartProgressUrl + '/blog/getComments?postId=' + postId;
+export async function readComments(postId: string): Promise<GetCommentsResponse> {
+    let url = smartProgressUrl + '/blog/getComments?post_id=' + postId;
     const response = await fetch(url, {
         headers: {
             Accept: 'application/json',
@@ -75,6 +94,9 @@ export async function readComments(postId: string) {
             Host: 'smartprogress.do'
         }
     });
-    if (!response.ok)
-        throw new Error('Could not read comments: ' + response.statusText);
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error('Could not read comments: ' + response.statusText + '\n' + text);
+    }
+    return await response.json();
 }
