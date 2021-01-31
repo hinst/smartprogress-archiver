@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import * as child_process from 'child_process';
-import * as rimraf from 'rimraf';
 
 const apiKey = fs.readFileSync('./moz-key.txt');
 const apiSecret = fs.readFileSync('./moz-key-secret.txt');
