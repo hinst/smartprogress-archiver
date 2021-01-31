@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build-all": "tsc --outDir ./compiled/ ./src/build.ts & node ./compiled/build.js",
-    "build-content": "webpack --config webpack.config.js"
+    "build": "tsc --outDir ./compiled/ ./src/build.ts & node ./compiled/build.js",
+    "build-package": "tsc --outDir ./compiled/ ./src/build-package.ts & node ./compiled/build-package.js"
   },
   "keywords": [],
   "author": "",
