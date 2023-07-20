@@ -1,6 +1,9 @@
 {
   "name": "smartprogress-archiver",
   "version": "1.0.0",
+  "engines": {
+    "node": "16"
+  },
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,7 +11,7 @@
     "build-package": "tsc --outDir ./compiled/ ./src/build-package.ts & node ./compiled/build-package.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "hinst",
   "license": "ISC",
   "devDependencies": {
     "@types/jszip": "^3.4.1",
