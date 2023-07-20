@@ -1,6 +1,7 @@
 import sleep from "sleep-promise";
 
-const smartProgressUrl = 'https://smartprogress.do';
+const smartProgressHost = 'smartprogress.do';
+const smartProgressUrl = 'https://' + smartProgressHost;
 
 export class Post {
     /** Can be: 'post' */
@@ -9,6 +10,10 @@ export class Post {
     msg: string;
     date: string;
     comments: Comment[];
+    images: {
+        url: string;
+        dataUrl: string;
+    }[];
     count_comments: string;
     username: string;
 }
@@ -35,6 +40,22 @@ export class User {
 
 type ProgressEventReceiver = (count: number) => Promise<void>;
 
+async function readComments(postId: string): Promise<GetCommentsResponse> {
+    let url = smartProgressUrl + '/blog/getComments?post_id=' + postId;
+    const response = await fetch(url, {
+        headers: {
+            Accept: 'application/json',
+            Cookie: document.cookie,
+            Host: smartProgressHost
+        }
+    });
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error('Could not read comments: ' + response.statusText + '\n' + text);
+    }
+    return await response.json();
+}
+
 async function readPosts(goalId: string, startId: string) {
     let url = smartProgressUrl + '/blog/getPosts';
     url += '?obj_id=' + goalId;
@@ -49,7 +70,7 @@ async function readPosts(goalId: string, startId: string) {
         headers: {
             Accept: 'application/json',
             Cookie: document.cookie,
-            Host: 'smartprogress.do'
+            Host: smartProgressHost
         }
     });
     if (!response.ok) {
@@ -58,6 +79,32 @@ async function readPosts(goalId: string, startId: string) {
     }
     const posts = await response.json();
     return posts;
+}
+
+async function getDataUrlFromBlob(data: Blob): Promise<string> {
+    const reader = new FileReader();
+    reader.readAsDataURL(data);
+    return new Promise<string>((resolve, reject) => {
+        reader.onloadend = () => {
+            const dataUrl = reader.result.toString();
+            resolve(dataUrl);
+        };
+        reader.onerror = event => reject(event);
+    });
+}
+
+async function readImages(post: Post) {
+    for (const image of post.images) {
+        let url = smartProgressUrl + image.url;
+        const response = await fetch(url, {
+            headers: {
+                Cookie: document.cookie,
+                Host: smartProgressHost
+            }
+        });
+        const blob = await response.blob();
+        image.dataUrl = await getDataUrlFromBlob(blob);
+    }
 }
 
 export async function readGoalPosts(goalId: string,
@@ -81,22 +128,8 @@ export async function readGoalPosts(goalId: string,
             if (onCommentProgress)
                 await onCommentProgress(post.comments.length);
         }
+        if (post.images && post.images.length)
+            await readImages(post);
     }
     return allPosts;
-}
-
-export async function readComments(postId: string): Promise<GetCommentsResponse> {
-    let url = smartProgressUrl + '/blog/getComments?post_id=' + postId;
-    const response = await fetch(url, {
-        headers: {
-            Accept: 'application/json',
-            Cookie: document.cookie,
-            Host: 'smartprogress.do'
-        }
-    });
-    if (!response.ok) {
-        const text = await response.text();
-        throw new Error('Could not read comments: ' + response.statusText + '\n' + text);
-    }
-    return await response.json();
 }

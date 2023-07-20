@@ -31,12 +31,18 @@ export class BlogExporter {
         const commentsContent = post.comments
             ? post.comments.map(comment => this.generateComment(comment)).join('\n')
             : '';
+        const imagesContent = post.images && post.images.length
+            ?   '<div style="margin-bottom: 14px">' +
+                    post.images.map(image => '<img src="' + image.dataUrl + '" height="150" style="margin-right: 14px">').join('') +
+                '</div>'
+            : '';
         return postPanelTemplate
             .replace('$date', post.date)
             .replace('$type', post.type)
             .replace('$text', post.msg)
             .replace('$username', post.username || '')
             .replace('$countOfComments', post.comments ? '' + post.comments.length : '?')
+            .replace('$images', imagesContent)
             .replace('$comments', commentsContent);
     }
 
